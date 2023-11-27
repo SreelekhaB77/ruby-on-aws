@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: currency-app-pv
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: standard
+  hostPath:
+    path: /rails/storage
+    type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: currency-app-pvc
+spec:
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: currency-app-pv
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: standard
+

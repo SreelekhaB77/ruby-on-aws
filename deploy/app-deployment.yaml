@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: currency-app # sets the name of the deployment
+spec:
+  replicas: 1 # defines the number of replicas per node
+  selector:
+    matchLabels:
+      app: currency-app # defines which pod the deployment is for
+  template: # defines a  template for each replica
+    metadata:
+      labels:
+        app: currency-app # defines the label to be applied to pods created from this deployment
+    spec:
+      containers:
+      - name: currency-app # defines the name of the container within each pod
+        image: urchymanny/currency-converter:v3 # Image from which the container is created (usually from a registry)
+        envFrom:
+        - secretRef:
+            name: my-secret # using the secret created from our .env file
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+        ports:
+        - containerPort: 3000
+        volumeMounts:
+        - mountPath: /rails/storage
+          name: currency-app-pv # name of the persistent volume to be mounted for the container
+      restartPolicy: Always
+      imagePullSecrets:
+      - name: regcred # using the secret created from our registry credentials
+      volumes:
+      - name: currency-app-pv
+        persistentVolumeClaim:
+          claimName: currency-app-pvc

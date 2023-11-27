@@ -1,0 +1,30 @@
+version: "3"
+services:
+  database-service:
+    image: postgres:14.2-alpine
+    container_name: currency-postgres
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    command: "postgres -c 'max_connections=500'"
+    env_file:
+      - ".env"
+    ports:
+      - "5432:5432"
+  app-service:
+    build: .
+    command: "./bin/rails server"
+    image: urchymanny/currency-converter:latest
+    container_name: currency-converter-server
+    env_file:
+      - ".env"
+    volumes:
+      - currency_storage:/rails/storage
+      - .:/rails # this line adds a bind mount. this means any change made in the Working dir is automatically reflected on the running version
+    depends_on:
+      - database-service
+    ports:
+      - "3000:3000"
+
+volumes:
+  pg_data: {}
+  currency_storage: {}

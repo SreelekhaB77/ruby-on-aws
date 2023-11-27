@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: currency-pg-service
+spec:
+  selector:
+    app: currency-pg
+  ports:
+  - protocol: TCP
+    port: 5432
+    targetPort: 5432
