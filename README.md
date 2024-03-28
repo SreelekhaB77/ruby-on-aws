@@ -289,7 +289,7 @@ This step is unnecessary, but it makes sense to use `docker-compose` before usin
          - ".env"
        volumes:
          - currency_storage:/rails/storage
-         - .:/rails # this line adds a bind mount. this means any change made in the Working dir is automatically reflected on the running version
+         - .:/rails # this line adds a bind mount. this means any change made in the Working dir is automatically reflected on the running version. This works when a filewatcher is setup for the local server
        depends_on:
          - database-service
        ports:
