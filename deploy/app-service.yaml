@@ -1,13 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: currency-app-service # Sets the name of the Service
+  name: currency-app
 spec:
+  type: LoadBalancer
   selector:
-    app: currency-app # Maps this service to a pod with a matching label
+    app: currency-app
   ports:
-  - protocol: TCP # Specifies the protocol used by the service (TCP/UDP)
-    port: 3000 # The port on which the service will be exposed
-    targetPort: 3000 # The port on the pod to which this service will forward traffic
-    nodePort: 30000
-  type: LoadBalancer # The type of service, LoadBalancer exposes the service externally
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
