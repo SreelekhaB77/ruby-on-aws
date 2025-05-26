@@ -34,10 +34,10 @@ phases:
       - echo Applying Kubernetes manifests...
       - kubectl apply -n ruby-app -f deploy/configmap.yaml
       - kubectl apply -n ruby-app -f deploy/secret.yaml
-      - kubectl apply -n ruby-app -f deploy/postgres-deployment.yaml
-      - kubectl apply -n ruby-app -f deploy/postgres-service.yaml
-      - kubectl apply -n ruby-app -f deploy/deployment.yaml
-      - kubectl apply -n ruby-app -f deploy/service.yaml
+      - kubectl apply -n ruby-app -f deploy/app-deployment.yaml
+      - kubectl apply -n ruby-app -f deploy/app-service.yaml
+      - kubectl apply -n ruby-app -f deploy/pg-deployment.yaml
+      - kubectl apply -n ruby-app -f deploy/pg-service.yaml
       - echo Checking rollout status...
       - kubectl rollout status deployment/rails-app -n ruby-app
 
@@ -45,7 +45,7 @@ artifacts:
   files:
     - deploy/configmap.yaml
     - deploy/secret.yaml
-    - deploy/deployment.yaml
-    - deploy/service.yaml
-    - deploy/postgres-deployment.yaml
-    - deploy/postgres-service.yaml
+    - deploy/app-deployment.yaml
+    - deploy/app-service.yaml
+    - deploy/pg-deployment.yaml
+    - deploy/pg-service.yaml
