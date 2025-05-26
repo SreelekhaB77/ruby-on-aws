@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  FCA_URL: https://api.freecurrencyapi.com/v1/
+  POSTGRES_DB: currency-db
+  POSTGRES_HOST: database-service
+  RAILS_ENV: production
