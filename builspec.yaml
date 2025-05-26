@@ -2,33 +2,50 @@ version: 0.2
 
 phases:
   install:
+    runtime-versions:
+      docker: 18
     commands:
       - echo Installing kubectl...
       - curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.28.2/2023-10-17/bin/linux/amd64/kubectl
       - chmod +x ./kubectl
       - mv ./kubectl /usr/local/bin/kubectl
+
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
       - aws --version
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 354918386077.dkr.ecr.us-east-1.amazonaws.com
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 379196425754.dkr.ecr.us-east-1.amazonaws.com
       - REPOSITORY_URI=379196425754.dkr.ecr.us-east-1.amazonaws.com/ruby-sample-app
       - IMAGE_TAG=latest
+
   build:
     commands:
-      - echo Building the Docker image...
+      - echo Building Docker image...
       - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
+
   post_build:
     commands:
-      - echo Pushing the Docker image to ECR...
+      - echo Pushing Docker image to ECR...
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo Updating kubeconfig for EKS cluster...
-      - aws eks update-kubeconfig --region us-east-1 --name sampleruby-cluster
-      - echo Deploying updated Kubernetes manifests...
-      - kubectl apply -f k8s/
+      - aws eks update-kubeconfig --region us-east-1 --name ruby-cluster
+      - echo Creating namespace if not exists...
+      - kubectl create namespace ruby-app || true
+      - echo Applying Kubernetes manifests...
+      - kubectl apply -n ruby-app -f deploy/configmap.yaml
+      - kubectl apply -n ruby-app -f deploy/secret.yaml
+      - kubectl apply -n ruby-app -f deploy/postgres-deployment.yaml
+      - kubectl apply -n ruby-app -f deploy/postgres-service.yaml
+      - kubectl apply -n ruby-app -f deploy/deployment.yaml
+      - kubectl apply -n ruby-app -f deploy/service.yaml
       - echo Checking rollout status...
-      - kubectl rollout status deployment/ruby-app
+      - kubectl rollout status deployment/rails-app -n ruby-app
+
 artifacts:
   files:
-    - k8s/deployment.yaml
-    - k8s/service.yaml
+    - deploy/configmap.yaml
+    - deploy/secret.yaml
+    - deploy/deployment.yaml
+    - deploy/service.yaml
+    - deploy/postgres-deployment.yaml
+    - deploy/postgres-service.yaml
